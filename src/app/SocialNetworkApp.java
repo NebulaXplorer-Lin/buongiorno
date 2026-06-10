@@ -1,3 +1,14 @@
+package app;
+
+import model.SocialNetwork;
+import model.Session;
+import service.AuthService;
+import service.UserService;
+import service.FriendService;
+import service.RecommendationService;
+import persistence.NetworkFileManager;
+import ui.ConsoleMenu;
+
 public class SocialNetworkApp {
     private SocialNetwork network;
     private Session session;
