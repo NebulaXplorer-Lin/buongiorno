@@ -271,7 +271,7 @@ friendIds = [u002, u003]
 
 ---
 
-### 5.2 `SocialNetwork.java`
+ ### 5.2 `SocialNetwork.java`
 
 #### Responsibility
 
@@ -405,9 +405,7 @@ currentUserId = "u001"
 
 #### Design Reason
 
-Using a `Session` means the user does not need to enter their own user ID for every operation. All profile, friend, and recommendation actions can be performed relative to the logged-in user.
-
----
+Using a `Session` means the user does not need to enter their own user ID for every operation. All profile, friend, and recommendation actions can be performed relative to
 
 ## 6. `service` Folder
 
