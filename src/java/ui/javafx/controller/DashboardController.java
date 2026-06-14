@@ -1,11 +1,16 @@
 package ui.javafx.controller;
 
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.stage.FileChooser;
+import java.io.File;
+import model.SocialNetwork;
 import model.User;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
@@ -52,6 +57,7 @@ public class DashboardController implements AppController {
         this.app = app;
         this.context = context;
         refreshLoggedInUser();
+        loadTabContent();
     }
 
     @FXML
@@ -59,19 +65,13 @@ public class DashboardController implements AppController {
         profileButton.setOnAction(event -> selectTab(profileTab));
         friendsButton.setOnAction(event -> selectTab(friendsTab));
         recommendationsButton.setOnAction(event -> selectTab(recommendationsTab));
-        saveButton.setOnAction(event -> showInfo("Save is not implemented yet."));
-        loadButton.setOnAction(event -> showInfo("Load is not implemented yet."));
+        saveButton.setOnAction(event -> handleSave());
+        loadButton.setOnAction(event -> handleLoad());
         logoutButton.setOnAction(event -> handleLogout());
     }
 
     private void refreshLoggedInUser() {
-        String currentUserId = context.getSession().getCurrentUserId();
-        if (currentUserId == null) {
-            loggedInUserLabel.setText("Not signed in");
-            return;
-        }
-
-        User currentUser = context.getNetwork().getUser(currentUserId);
+        User currentUser = context.getUserService().getCurrentUser();
         if (currentUser == null) {
             loggedInUserLabel.setText("Not signed in");
             return;
@@ -84,6 +84,29 @@ public class DashboardController implements AppController {
         contentTabPane.getSelectionModel().select(tab);
     }
 
+    private void loadTabContent() {
+        profileTab.setContent(loadChildView("/ui/javafx/view/profile.fxml"));
+        friendsTab.setContent(loadChildView("/ui/javafx/view/friends.fxml"));
+        recommendationsTab.setContent(loadChildView("/ui/javafx/view/recommendations.fxml"));
+    }
+
+    private Parent loadChildView(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            Object controller = loader.getController();
+
+            if (controller instanceof AppController appController) {
+                appController.setApp(app, context);
+            }
+
+            return root;
+        } catch (Exception exception) {
+            showError("Could not load " + fxmlPath + ".");
+            return new Label("Could not load screen.");
+        }
+    }
+
     private void handleLogout() {
         context.getAuthService().logout();
 
@@ -92,6 +115,51 @@ public class DashboardController implements AppController {
         } catch (Exception exception) {
             showError("Could not return to login screen.");
         }
+    }
+
+    private void handleLoad() {
+        File selectedFile = createDataFileChooser("Load Network Data")
+                .showOpenDialog(app.getPrimaryStage());
+
+        if (selectedFile == null) {
+            return;
+        }
+
+        try {
+            SocialNetwork loadedNetwork = context.getFileManager().loadFromFile(selectedFile.getPath());
+            context.replaceCurrentNetworkData(loadedNetwork);
+            context.getSession().logout();
+            showInfo("Network data loaded. Please sign in again.");
+            app.showLoginScreen();
+        } catch (Exception exception) {
+            showError("Could not load network data.");
+        }
+    }
+
+    private void handleSave() {
+        File selectedFile = createDataFileChooser("Save Network Data")
+                .showSaveDialog(app.getPrimaryStage());
+
+        if (selectedFile == null) {
+            return;
+        }
+
+        try {
+            context.getFileManager().saveToFile(context.getNetwork(), selectedFile.getPath());
+            showInfo("Network data saved.");
+        } catch (Exception exception) {
+            showError("Could not save network data.");
+        }
+    }
+
+    private FileChooser createDataFileChooser(String title) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
+                new FileChooser.ExtensionFilter("All Files", "*.*"));
+        return fileChooser;
     }
 
     private void showError(String message) {

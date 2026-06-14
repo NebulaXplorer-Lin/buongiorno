@@ -5,6 +5,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import java.io.File;
+import model.SocialNetwork;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
@@ -43,8 +46,8 @@ public class LoginController implements AppController {
     private void initialize() {
         loginButton.setOnAction(event -> handleLogin());
         registerButton.setOnAction(event -> handleRegister());
-        loadButton.setOnAction(event -> showInfo("Load is not implemented yet."));
-        saveButton.setOnAction(event -> showInfo("Save is not implemented yet."));
+        loadButton.setOnAction(event -> handleLoad());
+        saveButton.setOnAction(event -> handleSave());
         exitButton.setOnAction(event -> handleExit());
     }
 
@@ -80,6 +83,50 @@ public class LoginController implements AppController {
 
     private void handleExit() {
         app.getPrimaryStage().close();
+    }
+
+    private void handleLoad() {
+        File selectedFile = createDataFileChooser("Load Network Data")
+                .showOpenDialog(app.getPrimaryStage());
+
+        if (selectedFile == null) {
+            return;
+        }
+
+        try {
+            SocialNetwork loadedNetwork = context.getFileManager().loadFromFile(selectedFile.getPath());
+            context.replaceCurrentNetworkData(loadedNetwork);
+            context.getSession().logout();
+            showInfo("Network data loaded. Please sign in.");
+        } catch (Exception exception) {
+            showError("Could not load network data.");
+        }
+    }
+
+    private void handleSave() {
+        File selectedFile = createDataFileChooser("Save Network Data")
+                .showSaveDialog(app.getPrimaryStage());
+
+        if (selectedFile == null) {
+            return;
+        }
+
+        try {
+            context.getFileManager().saveToFile(context.getNetwork(), selectedFile.getPath());
+            showInfo("Network data saved.");
+        } catch (Exception exception) {
+            showError("Could not save network data.");
+        }
+    }
+
+    private FileChooser createDataFileChooser(String title) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
+                new FileChooser.ExtensionFilter("All Files", "*.*"));
+        return fileChooser;
     }
 
     private void showError(String message) {
