@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -24,7 +25,11 @@
             <Label styleClass="screen-title" text="Dashboard" />
             <Label fx:id="loggedInUserLabel" text="Not signed in" />
             <HBox HBox.hgrow="ALWAYS" />
-            <Button fx:id="logoutButton" text="Logout" />
+            <Button fx:id="logoutButton" text="Logout">
+                <tooltip>
+                    <Tooltip text="Log out and return to the login screen" />
+                </tooltip>
+            </Button>
         </HBox>
     </top>
 
@@ -33,9 +38,21 @@
             <padding>
                 <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
             </padding>
-            <Button fx:id="profileButton" maxWidth="Infinity" text="Profile" />
-            <Button fx:id="friendsButton" maxWidth="Infinity" text="Friends" />
-            <Button fx:id="recommendationsButton" maxWidth="Infinity" text="Recommendations" />
+            <Button fx:id="profileButton" maxWidth="Infinity" text="Profile">
+                <tooltip>
+                    <Tooltip text="View and edit your profile information" />
+                </tooltip>
+            </Button>
+            <Button fx:id="friendsButton" maxWidth="Infinity" text="Friends">
+                <tooltip>
+                    <Tooltip text="Manage friends and friend filters" />
+                </tooltip>
+            </Button>
+            <Button fx:id="recommendationsButton" maxWidth="Infinity" text="Recommendations">
+                <tooltip>
+                    <Tooltip text="View recommended users to add as friends" />
+                </tooltip>
+            </Button>
         </VBox>
     </left>
 

@@ -44,9 +44,10 @@ public class ProfileController implements AppController {
 
     @FXML
     private void initialize() {
-        editNameButton.setOnAction(event -> nameField.requestFocus());
-        editWorkplaceButton.setOnAction(event -> workplaceField.requestFocus());
-        editHometownButton.setOnAction(event -> hometownField.requestFocus());
+        lockProfileFields();
+        editNameButton.setOnAction(event -> enableEditing(nameField));
+        editWorkplaceButton.setOnAction(event -> enableEditing(workplaceField));
+        editHometownButton.setOnAction(event -> enableEditing(hometownField));
         saveProfileButton.setOnAction(event -> handleSaveProfile());
     }
 
@@ -57,6 +58,7 @@ public class ProfileController implements AppController {
             nameField.clear();
             workplaceField.clear();
             hometownField.clear();
+            lockProfileFields();
             return;
         }
 
@@ -64,6 +66,19 @@ public class ProfileController implements AppController {
         nameField.setText(currentUser.getUserName());
         workplaceField.setText(currentUser.getWorkplace());
         hometownField.setText(currentUser.getHometown());
+        lockProfileFields();
+    }
+
+    private void enableEditing(TextField field) {
+        field.setEditable(true);
+        field.requestFocus();
+        field.selectAll();
+    }
+
+    private void lockProfileFields() {
+        nameField.setEditable(false);
+        workplaceField.setEditable(false);
+        hometownField.setEditable(false);
     }
 
     private void handleSaveProfile() {
@@ -85,6 +100,7 @@ public class ProfileController implements AppController {
         }
 
         refreshProfile();
+        lockProfileFields();
         showInfo("Profile updated.");
     }
 

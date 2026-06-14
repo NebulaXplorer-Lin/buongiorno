@@ -1,5 +1,6 @@
 package ui.javafx.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -36,6 +37,9 @@ public class FriendsController implements AppController {
     private Button filterWorkplaceButton;
 
     @FXML
+    private Button resetButton;
+
+    @FXML
     private Button refreshButton;
 
     @FXML
@@ -54,6 +58,7 @@ public class FriendsController implements AppController {
     private TableColumn<User, String> hometownColumn;
 
     private AppContext context;
+    private Collection<User> baseUsers = new ArrayList<>();
 
     @Override
     public void setApp(SocialNetworkFxApp app, AppContext context) {
@@ -73,14 +78,21 @@ public class FriendsController implements AppController {
         commonFriendsButton.setOnAction(event -> handleCommonFriends());
         filterHometownButton.setOnAction(event -> handleFilterByHometown());
         filterWorkplaceButton.setOnAction(event -> handleFilterByWorkplace());
-        refreshButton.setOnAction(event -> handleReset());
+        resetButton.setOnAction(event -> handleReset());
+        refreshButton.setOnAction(event -> handleRefresh());
     }
 
     private void refreshFriends() {
-        showUsers(context.getFriendService().getCurrentUserFriends());
+        showBaseUsers(context.getFriendService().getCurrentUserFriends());
     }
 
     private void handleReset() {
+        filterField.clear();
+        friendsTable.getSelectionModel().clearSelection();
+        showUsers(baseUsers);
+    }
+
+    private void handleRefresh() {
         friendIdField.clear();
         filterField.clear();
         friendsTable.getSelectionModel().clearSelection();
@@ -134,7 +146,7 @@ public class FriendsController implements AppController {
             return;
         }
 
-        showUsers(context.getFriendService().getFriendsOfUser(selectedUser.getUserId()));
+        showBaseUsers(context.getFriendService().getFriendsOfUser(selectedUser.getUserId()));
     }
 
     private void handleCommonFriends() {
@@ -144,7 +156,7 @@ public class FriendsController implements AppController {
             return;
         }
 
-        showUsers(context.getFriendService().getCommonFriends(otherUser.getUserId()));
+        showBaseUsers(context.getFriendService().getCommonFriends(otherUser.getUserId()));
     }
 
     private void handleFilterByHometown() {
@@ -154,7 +166,14 @@ public class FriendsController implements AppController {
             return;
         }
 
-        showUsers(context.getFriendService().filterCurrentUserFriendsByHometown(hometown));
+        Collection<User> filteredUsers = new ArrayList<>();
+        for (User user : baseUsers) {
+            if (hometown.equals(user.getHometown())) {
+                filteredUsers.add(user);
+            }
+        }
+
+        showUsers(filteredUsers);
     }
 
     private void handleFilterByWorkplace() {
@@ -164,7 +183,14 @@ public class FriendsController implements AppController {
             return;
         }
 
-        showUsers(context.getFriendService().filterCurrentUserFriendsByWorkplace(workplace));
+        Collection<User> filteredUsers = new ArrayList<>();
+        for (User user : baseUsers) {
+            if (workplace.equals(user.getWorkplace())) {
+                filteredUsers.add(user);
+            }
+        }
+
+        showUsers(filteredUsers);
     }
 
     private User getSelectedOrEnteredUser() {
@@ -183,6 +209,11 @@ public class FriendsController implements AppController {
 
     private void showUsers(Collection<User> users) {
         friendsTable.setItems(FXCollections.observableArrayList(users));
+    }
+
+    private void showBaseUsers(Collection<User> users) {
+        baseUsers = new ArrayList<>(users);
+        showUsers(baseUsers);
     }
 
     private void showError(String message) {

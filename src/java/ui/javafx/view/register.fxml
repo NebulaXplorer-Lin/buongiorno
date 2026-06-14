@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -47,8 +48,16 @@
             </GridPane>
 
             <HBox alignment="CENTER_RIGHT" spacing="8.0">
-                <Button fx:id="cancelButton" text="Cancel" />
-                <Button fx:id="registerButton" text="Register" />
+                <Button fx:id="cancelButton" text="Cancel">
+                    <tooltip>
+                        <Tooltip text="Return to login without creating an account" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="registerButton" text="Register">
+                    <tooltip>
+                        <Tooltip text="Create a new account with the entered information" />
+                    </tooltip>
+                </Button>
             </HBox>
         </VBox>
     </center>

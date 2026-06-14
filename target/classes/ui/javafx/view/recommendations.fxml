@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -21,8 +22,16 @@
             </padding>
             <Label styleClass="screen-title" text="Recommendations" />
             <HBox spacing="8.0">
-                <Button fx:id="refreshButton" text="Refresh" />
-                <Button fx:id="addSelectedButton" text="Add Selected Recommendation" />
+                <Button fx:id="refreshButton" text="Refresh">
+                    <tooltip>
+                        <Tooltip text="Reload friend recommendations" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="addSelectedButton" text="Add Selected Recommendation">
+                    <tooltip>
+                        <Tooltip text="Add the selected recommended user as a friend" />
+                    </tooltip>
+                </Button>
             </HBox>
         </VBox>
     </top>

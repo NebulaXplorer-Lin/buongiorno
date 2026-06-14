@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -20,18 +21,49 @@
             <padding>
                 <Insets bottom="12.0" left="16.0" right="16.0" top="16.0" />
             </padding>
-            <Label styleClass="screen-title" text="Friends" />
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Label styleClass="screen-title" text="Friends" />
+                <Button fx:id="refreshButton" text="Refresh">
+                    <tooltip>
+                        <Tooltip text="Reload your own full friend list" />
+                    </tooltip>
+                </Button>
+            </HBox>
             <HBox spacing="8.0">
                 <TextField fx:id="friendIdField" promptText="Friend user ID" HBox.hgrow="ALWAYS" />
-                <Button fx:id="addFriendButton" text="Add Friend" />
-                <Button fx:id="viewFriendsButton" text="View Friend's Friends" />
-                <Button fx:id="commonFriendsButton" text="Common Friends" />
+                <Button fx:id="addFriendButton" text="Add Friend">
+                    <tooltip>
+                        <Tooltip text="Add the entered user ID as a friend" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="viewFriendsButton" text="View Friend's Friends">
+                    <tooltip>
+                        <Tooltip text="Show the friends of the selected or entered user" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="commonFriendsButton" text="Common Friends">
+                    <tooltip>
+                        <Tooltip text="Show common friends with the selected or entered user" />
+                    </tooltip>
+                </Button>
             </HBox>
             <HBox spacing="8.0">
                 <TextField fx:id="filterField" promptText="Filter value" HBox.hgrow="ALWAYS" />
-                <Button fx:id="filterHometownButton" text="Filter Hometown" />
-                <Button fx:id="filterWorkplaceButton" text="Filter Workplace" />
-                <Button fx:id="refreshButton" text="Reset" />
+                <Button fx:id="filterHometownButton" text="Filter Hometown">
+                    <tooltip>
+                        <Tooltip text="Filter current friends by hometown" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="filterWorkplaceButton" text="Filter Workplace">
+                    <tooltip>
+                        <Tooltip text="Filter current friends by workplace" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="resetButton" text="Reset">
+                    <tooltip>
+                        <Tooltip text="Clear filters and return to the list before filtering" />
+                    </tooltip>
+                </Button>
             </HBox>
         </VBox>
     </top>
