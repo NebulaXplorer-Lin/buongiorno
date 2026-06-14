@@ -13,7 +13,8 @@
 <BorderPane prefHeight="560.0" prefWidth="760.0" styleClass="screen"
             stylesheets="@../style/app.css"
             xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1">
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ui.javafx.controller.RegisterController">
     <center>
         <VBox alignment="CENTER" maxWidth="420.0" spacing="16.0">
             <padding>
