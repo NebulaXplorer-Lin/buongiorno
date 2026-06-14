@@ -2,25 +2,40 @@ package app;
 
 import model.Session;
 import model.SocialNetwork;
+import persistence.NetworkFileManager;
 import service.AuthService;
-import ui.javafx.AppContext;
+import service.FriendService;
+import service.RecommendationService;
+import service.UserService;
 
 public class SocialNetworkApp {
     private final SocialNetwork network;
     private final Session session;
     private final AuthService authService;
+    private final UserService userService;
+    private final FriendService friendService;
+    private final RecommendationService recommendationService;
+    private final NetworkFileManager fileManager;
 
     public SocialNetworkApp() {
         network = new SocialNetwork();
         session = new Session();
 
         authService = new AuthService(network, session);
+        userService = new UserService(network, session);
+        friendService = new FriendService(network, session);
+        recommendationService = new RecommendationService(network, session);
+        fileManager = new NetworkFileManager(network);
     }
 
     public AppContext createContext() {
         return new AppContext(
                 network,
                 session,
-                authService);
+                authService,
+                userService,
+                friendService,
+                recommendationService,
+                fileManager);
     }
 }
