@@ -1,0 +1,7 @@
+model\Session.class
+service\AuthService.class
+util\PasswordUtil.class
+service\RecommendationService.class
+Main.class
+model\SocialNetwork.class
+model\User.class

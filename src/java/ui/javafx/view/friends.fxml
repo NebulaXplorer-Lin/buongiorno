@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" styleClass="screen"
+            stylesheets="@../style/app.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <VBox spacing="12.0">
+            <padding>
+                <Insets bottom="12.0" left="16.0" right="16.0" top="16.0" />
+            </padding>
+            <Label styleClass="screen-title" text="Friends" />
+            <HBox spacing="8.0">
+                <TextField fx:id="friendIdField" promptText="Friend user ID" HBox.hgrow="ALWAYS" />
+                <Button fx:id="addFriendButton" text="Add Friend" />
+                <Button fx:id="viewFriendsButton" text="View Friend's Friends" />
+                <Button fx:id="commonFriendsButton" text="Common Friends" />
+            </HBox>
+            <HBox spacing="8.0">
+                <TextField fx:id="filterField" promptText="Filter value" HBox.hgrow="ALWAYS" />
+                <Button fx:id="filterHometownButton" text="Filter Hometown" />
+                <Button fx:id="filterWorkplaceButton" text="Filter Workplace" />
+                <Button fx:id="refreshButton" text="Refresh" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <TableView fx:id="friendsTable">
+            <columns>
+                <TableColumn fx:id="userIdColumn" prefWidth="140.0" text="User ID" />
+                <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Name" />
+                <TableColumn fx:id="workplaceColumn" prefWidth="220.0" text="Workplace" />
+                <TableColumn fx:id="hometownColumn" prefWidth="220.0" text="Hometown" />
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

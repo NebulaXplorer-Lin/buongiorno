@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" styleClass="screen"
+            stylesheets="@../style/app.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <VBox spacing="12.0">
+            <padding>
+                <Insets bottom="12.0" left="16.0" right="16.0" top="16.0" />
+            </padding>
+            <Label styleClass="screen-title" text="Recommendations" />
+            <HBox spacing="8.0">
+                <Button fx:id="refreshButton" text="Refresh" />
+                <Button fx:id="addSelectedButton" text="Add Selected Recommendation" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <TableView fx:id="recommendationsTable">
+            <columns>
+                <TableColumn fx:id="userIdColumn" prefWidth="140.0" text="User ID" />
+                <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Name" />
+                <TableColumn fx:id="workplaceColumn" prefWidth="220.0" text="Workplace" />
+                <TableColumn fx:id="hometownColumn" prefWidth="220.0" text="Hometown" />
+                <TableColumn fx:id="scoreColumn" prefWidth="100.0" text="Score" />
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>
