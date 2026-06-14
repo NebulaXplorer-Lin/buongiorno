@@ -7,7 +7,7 @@ public class Session {
         currentUserId = null;
     }
 
-    public boolean isLoggedin() {
+    public boolean isLoggedIn() {
         return currentUserId != null;
     }
 
@@ -18,5 +18,9 @@ public class Session {
     public void logout() {
         currentUserId = null;
 
+    }
+
+    public String getCurrentUserId() {
+        return currentUserId;
     }
 }
