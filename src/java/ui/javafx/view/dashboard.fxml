@@ -24,7 +24,6 @@
             <Label styleClass="screen-title" text="Dashboard" />
             <Label fx:id="loggedInUserLabel" text="Not signed in" />
             <HBox HBox.hgrow="ALWAYS" />
-            <Button fx:id="saveButton" text="Save" />
             <Button fx:id="logoutButton" text="Logout" />
         </HBox>
     </top>
@@ -37,8 +36,6 @@
             <Button fx:id="profileButton" maxWidth="Infinity" text="Profile" />
             <Button fx:id="friendsButton" maxWidth="Infinity" text="Friends" />
             <Button fx:id="recommendationsButton" maxWidth="Infinity" text="Recommendations" />
-            <Separator />
-            <Button fx:id="loadButton" maxWidth="Infinity" text="Load Data" />
         </VBox>
     </left>
 

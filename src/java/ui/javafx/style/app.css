@@ -71,7 +71,6 @@
 #loginButton,
 #registerButton,
 #saveProfileButton,
-#addFriendButton,
 #addSelectedButton {
     -fx-background-color: #2563eb;
     -fx-border-color: #2563eb;
@@ -81,7 +80,6 @@
 #loginButton:hover,
 #registerButton:hover,
 #saveProfileButton:hover,
-#addFriendButton:hover,
 #addSelectedButton:hover {
     -fx-background-color: #1d4ed8;
     -fx-border-color: #1d4ed8;

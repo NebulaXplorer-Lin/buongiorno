@@ -8,9 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.stage.FileChooser;
-import java.io.File;
-import model.SocialNetwork;
 import model.User;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
@@ -18,9 +15,6 @@ import ui.javafx.SocialNetworkFxApp;
 public class DashboardController implements AppController {
     @FXML
     private Label loggedInUserLabel;
-
-    @FXML
-    private Button saveButton;
 
     @FXML
     private Button logoutButton;
@@ -33,9 +27,6 @@ public class DashboardController implements AppController {
 
     @FXML
     private Button recommendationsButton;
-
-    @FXML
-    private Button loadButton;
 
     @FXML
     private TabPane contentTabPane;
@@ -65,8 +56,6 @@ public class DashboardController implements AppController {
         profileButton.setOnAction(event -> selectTab(profileTab));
         friendsButton.setOnAction(event -> selectTab(friendsTab));
         recommendationsButton.setOnAction(event -> selectTab(recommendationsTab));
-        saveButton.setOnAction(event -> handleSave());
-        loadButton.setOnAction(event -> handleLoad());
         logoutButton.setOnAction(event -> handleLogout());
     }
 
@@ -117,57 +106,8 @@ public class DashboardController implements AppController {
         }
     }
 
-    private void handleLoad() {
-        File selectedFile = createDataFileChooser("Load Network Data")
-                .showOpenDialog(app.getPrimaryStage());
-
-        if (selectedFile == null) {
-            return;
-        }
-
-        try {
-            SocialNetwork loadedNetwork = context.getFileManager().loadFromFile(selectedFile.getPath());
-            context.replaceCurrentNetworkData(loadedNetwork);
-            context.getSession().logout();
-            showInfo("Network data loaded. Please sign in again.");
-            app.showLoginScreen();
-        } catch (Exception exception) {
-            showError("Could not load network data.");
-        }
-    }
-
-    private void handleSave() {
-        File selectedFile = createDataFileChooser("Save Network Data")
-                .showSaveDialog(app.getPrimaryStage());
-
-        if (selectedFile == null) {
-            return;
-        }
-
-        try {
-            context.getFileManager().saveToFile(context.getNetwork(), selectedFile.getPath());
-            showInfo("Network data saved.");
-        } catch (Exception exception) {
-            showError("Could not save network data.");
-        }
-    }
-
-    private FileChooser createDataFileChooser(String title) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(title);
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
-                new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
-                new FileChooser.ExtensionFilter("All Files", "*.*"));
-        return fileChooser;
-    }
-
     private void showError(String message) {
         showAlert(Alert.AlertType.ERROR, "Dashboard Error", message);
-    }
-
-    private void showInfo(String message) {
-        showAlert(Alert.AlertType.INFORMATION, "Information", message);
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {

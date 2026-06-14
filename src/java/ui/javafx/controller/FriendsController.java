@@ -73,11 +73,18 @@ public class FriendsController implements AppController {
         commonFriendsButton.setOnAction(event -> handleCommonFriends());
         filterHometownButton.setOnAction(event -> handleFilterByHometown());
         filterWorkplaceButton.setOnAction(event -> handleFilterByWorkplace());
-        refreshButton.setOnAction(event -> refreshFriends());
+        refreshButton.setOnAction(event -> handleReset());
     }
 
     private void refreshFriends() {
         showUsers(context.getFriendService().getCurrentUserFriends());
+    }
+
+    private void handleReset() {
+        friendIdField.clear();
+        filterField.clear();
+        friendsTable.getSelectionModel().clearSelection();
+        refreshFriends();
     }
 
     private void handleAddFriend() {
@@ -87,15 +94,37 @@ public class FriendsController implements AppController {
             return;
         }
 
+        User currentUser = context.getUserService().getCurrentUser();
+        if (currentUser == null) {
+            showError("Please sign in before adding friends.");
+            return;
+        }
+
+        if (currentUser.getUserId().equals(friendId)) {
+            showError("You cannot add yourself as a friend.");
+            return;
+        }
+
+        User targetUser = context.getUserService().getUserById(friendId);
+        if (targetUser == null) {
+            showError("No user found with ID: " + friendId);
+            return;
+        }
+
+        if (context.getFriendService().areFriends(currentUser.getUserId(), friendId)) {
+            showError(targetUser.getUserName() + " is already your friend.");
+            return;
+        }
+
         boolean addSucceeded = context.getFriendService().addFriendToCurrentUser(friendId);
         if (!addSucceeded) {
-            showError("Could not add friend. Check the user ID and current login state.");
+            showError("Could not add friend.");
             return;
         }
 
         friendIdField.clear();
         refreshFriends();
-        showInfo("Friend added.");
+        showInfo(targetUser.getUserName() + " added as a friend.");
     }
 
     private void handleViewFriends() {

@@ -27,19 +27,19 @@
                 <Label fx:id="userIdLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                 <Label text="Name" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <TextField fx:id="nameField" promptText="Name"
+                <TextField fx:id="nameField" editable="false" promptText="Name"
                            GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Button fx:id="editNameButton" text="Edit"
                         GridPane.columnIndex="2" GridPane.rowIndex="1" />
 
                 <Label text="Workplace" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <TextField fx:id="workplaceField" promptText="Workplace"
+                <TextField fx:id="workplaceField" editable="false" promptText="Workplace"
                            GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Button fx:id="editWorkplaceButton" text="Edit"
                         GridPane.columnIndex="2" GridPane.rowIndex="2" />
 
                 <Label text="Hometown" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <TextField fx:id="hometownField" promptText="Hometown"
+                <TextField fx:id="hometownField" editable="false" promptText="Hometown"
                            GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <Button fx:id="editHometownButton" text="Edit"
                         GridPane.columnIndex="2" GridPane.rowIndex="3" />

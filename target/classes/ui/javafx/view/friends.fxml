@@ -31,7 +31,7 @@
                 <TextField fx:id="filterField" promptText="Filter value" HBox.hgrow="ALWAYS" />
                 <Button fx:id="filterHometownButton" text="Filter Hometown" />
                 <Button fx:id="filterWorkplaceButton" text="Filter Workplace" />
-                <Button fx:id="refreshButton" text="Refresh" />
+                <Button fx:id="refreshButton" text="Reset" />
             </HBox>
         </VBox>
     </top>

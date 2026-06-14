@@ -1,0 +1,13 @@
+USER,u001,Alice,OpenAI,Dundee,97
+USER,u002,Bob,Google,London,97
+USER,u003,Carol,OpenAI,Dundee,97
+USER,u004,David,OpenAI,Glasgow,97
+USER,u005,Emma,Amazon,Dundee,97
+USER,u006,Frank,Google,London,97
+FRIEND,u001,u002
+FRIEND,u001,u003
+FRIEND,u002,u004
+FRIEND,u002,u006
+FRIEND,u003,u004
+FRIEND,u003,u005
+FRIEND,u004,u005
