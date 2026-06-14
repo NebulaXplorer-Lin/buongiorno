@@ -73,7 +73,7 @@ public class DashboardController implements AppController {
 
         User currentUser = context.getNetwork().getUser(currentUserId);
         if (currentUser == null) {
-            loggedInUserLabel.setText(currentUserId);
+            loggedInUserLabel.setText("Not signed in");
             return;
         }
 

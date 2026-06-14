@@ -14,7 +14,8 @@
 <BorderPane prefHeight="640.0" prefWidth="960.0" styleClass="screen"
             stylesheets="@../style/app.css"
             xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1">
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ui.javafx.controller.DashboardController">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="top-bar">
             <padding>
