@@ -21,7 +21,7 @@
                 <Insets bottom="12.0" left="16.0" right="16.0" top="16.0" />
             </padding>
             <Label styleClass="screen-title" text="Recommendations" />
-            <HBox spacing="8.0">
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
                 <Button fx:id="refreshButton" text="Refresh">
                     <tooltip>
                         <Tooltip text="Reload friend recommendations" />
@@ -32,6 +32,8 @@
                         <Tooltip text="Add the selected recommended user as a friend" />
                     </tooltip>
                 </Button>
+                <Label styleClass="score-formula"
+                       text="Recommendation algorithm: candidates are friends-of-friends; score = mutual friends x 1 + same workplace x 2 + same hometown x 2" />
             </HBox>
         </VBox>
     </top>

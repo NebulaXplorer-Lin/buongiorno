@@ -16,6 +16,28 @@
     -fx-text-fill: #6b7280;
 }
 
+.row-title {
+    -fx-font-weight: 700;
+    -fx-text-fill: #334155;
+}
+
+.lookup-label {
+    -fx-font-weight: 700;
+}
+
+.lookup-found {
+    -fx-text-fill: #15803d;
+}
+
+.lookup-missing {
+    -fx-text-fill: #b45309;
+}
+
+.score-formula {
+    -fx-text-fill: #475569;
+    -fx-font-weight: 600;
+}
+
 .top-bar {
     -fx-background-color: #ffffff;
     -fx-border-color: transparent transparent #d8dee9 transparent;
@@ -33,7 +55,8 @@
 }
 
 .text-field,
-.password-field {
+.password-field,
+.combo-box {
     -fx-background-color: #ffffff;
     -fx-border-color: #cbd5e1;
     -fx-border-radius: 4px;
@@ -43,7 +66,8 @@
 }
 
 .text-field:focused,
-.password-field:focused {
+.password-field:focused,
+.combo-box:focused {
     -fx-border-color: #2563eb;
     -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.18), 8, 0, 0, 0);
 }
@@ -71,7 +95,15 @@
 #loginButton,
 #registerButton,
 #saveProfileButton,
-#addSelectedButton {
+#addSelectedButton,
+#searchButton,
+#refreshButton,
+#addFriendButton,
+#viewFriendsButton,
+#commonFriendsButton,
+#detailsResetButton,
+#sameHometownButton,
+#sameWorkplaceButton {
     -fx-background-color: #2563eb;
     -fx-border-color: #2563eb;
     -fx-text-fill: #ffffff;
@@ -80,7 +112,15 @@
 #loginButton:hover,
 #registerButton:hover,
 #saveProfileButton:hover,
-#addSelectedButton:hover {
+#addSelectedButton:hover,
+#searchButton:hover,
+#refreshButton:hover,
+#addFriendButton:hover,
+#viewFriendsButton:hover,
+#commonFriendsButton:hover,
+#detailsResetButton:hover,
+#sameHometownButton:hover,
+#sameWorkplaceButton:hover {
     -fx-background-color: #1d4ed8;
     -fx-border-color: #1d4ed8;
 }

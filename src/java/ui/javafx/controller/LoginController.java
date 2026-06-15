@@ -3,11 +3,13 @@ package ui.javafx.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import java.io.File;
 import model.SocialNetwork;
+import model.User;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
@@ -17,6 +19,9 @@ public class LoginController implements AppController {
 
     @FXML
     private PasswordField passwordField;
+
+    @FXML
+    private Label userLookupLabel;
 
     @FXML
     private Button loginButton;
@@ -44,6 +49,7 @@ public class LoginController implements AppController {
 
     @FXML
     private void initialize() {
+        userIdField.textProperty().addListener((observable, oldValue, newValue) -> updateUserLookupLabel());
         loginButton.setOnAction(event -> handleLogin());
         registerButton.setOnAction(event -> handleRegister());
         loadButton.setOnAction(event -> handleLoad());
@@ -97,9 +103,33 @@ public class LoginController implements AppController {
             SocialNetwork loadedNetwork = context.getFileManager().loadFromFile(selectedFile.getPath());
             context.replaceCurrentNetworkData(loadedNetwork);
             context.getSession().logout();
+            updateUserLookupLabel();
             showInfo("Network data loaded. Please sign in.");
         } catch (Exception exception) {
             showError("Could not load network data.");
+        }
+    }
+
+    private void updateUserLookupLabel() {
+        if (context == null) {
+            return;
+        }
+
+        String userId = userIdField.getText().trim();
+        if (userId.isEmpty()) {
+            userLookupLabel.setText("");
+            userLookupLabel.getStyleClass().removeAll("lookup-found", "lookup-missing");
+            return;
+        }
+
+        User user = context.getUserService().getUserById(userId);
+        userLookupLabel.getStyleClass().removeAll("lookup-found", "lookup-missing");
+        if (user == null) {
+            userLookupLabel.setText("User not found");
+            userLookupLabel.getStyleClass().add("lookup-missing");
+        } else {
+            userLookupLabel.setText(user.getUserName());
+            userLookupLabel.getStyleClass().add("lookup-found");
         }
     }
 

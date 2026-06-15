@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -29,34 +30,52 @@
                     </tooltip>
                 </Button>
             </HBox>
-            <HBox spacing="8.0">
-                <TextField fx:id="friendIdField" promptText="Friend user ID" HBox.hgrow="ALWAYS" />
-                <Button fx:id="addFriendButton" text="Add Friend">
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label minWidth="120.0" styleClass="row-title" text="Add Friend" />
+                <ComboBox fx:id="searchTypeComboBox" prefWidth="130.0" />
+                <TextField fx:id="searchField" promptText="Search value" HBox.hgrow="ALWAYS" />
+                <Button fx:id="searchButton" text="Search">
                     <tooltip>
-                        <Tooltip text="Add the entered user ID as a friend" />
+                        <Tooltip text="Find users by user ID, name, workplace, or hometown" />
                     </tooltip>
                 </Button>
+                <Button fx:id="addFriendButton" text="Add Friend">
+                    <tooltip>
+                        <Tooltip text="Add the selected search result as a friend" />
+                    </tooltip>
+                </Button>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label minWidth="120.0" styleClass="row-title" text="Friend Details" />
+                <Label fx:id="selectedFriendLabel" minWidth="220.0" text="Selected friend: -" />
                 <Button fx:id="viewFriendsButton" text="View Friend's Friends">
                     <tooltip>
-                        <Tooltip text="Show the friends of the selected or entered user" />
+                        <Tooltip text="Show the selected friend's friends" />
                     </tooltip>
                 </Button>
                 <Button fx:id="commonFriendsButton" text="Common Friends">
                     <tooltip>
-                        <Tooltip text="Show common friends with the selected or entered user" />
+                        <Tooltip text="Show common friends with the selected friend" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="detailsResetButton" text="Reset">
+                    <tooltip>
+                        <Tooltip text="Clear selected friend and return to your full friend list" />
                     </tooltip>
                 </Button>
             </HBox>
-            <HBox spacing="8.0">
-                <TextField fx:id="filterField" promptText="Filter value" HBox.hgrow="ALWAYS" />
-                <Button fx:id="filterHometownButton" text="Filter Hometown">
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label minWidth="120.0" styleClass="row-title" text="Filter Friends" />
+                <ComboBox fx:id="hometownFilterComboBox" prefWidth="180.0" promptText="Hometown" />
+                <ComboBox fx:id="workplaceFilterComboBox" prefWidth="180.0" promptText="Workplace" />
+                <Button fx:id="sameHometownButton" text="Same Hometown">
                     <tooltip>
-                        <Tooltip text="Filter current friends by hometown" />
+                        <Tooltip text="Filter to friends who share your hometown" />
                     </tooltip>
                 </Button>
-                <Button fx:id="filterWorkplaceButton" text="Filter Workplace">
+                <Button fx:id="sameWorkplaceButton" text="Same Workplace">
                     <tooltip>
-                        <Tooltip text="Filter current friends by workplace" />
+                        <Tooltip text="Filter to friends who share your workplace" />
                     </tooltip>
                 </Button>
                 <Button fx:id="resetButton" text="Reset">

@@ -28,6 +28,7 @@ public class FriendService {
     }
 
     public List<User> getFriendsOfUser(String userId) {
+        String currentUserId = session.getCurrentUserId();
         User user = network.getUser(userId);
         if (user == null) {
             return new ArrayList<>();
@@ -35,6 +36,10 @@ public class FriendService {
 
         List<User> friends = new ArrayList<>();
         for (String friendId : user.getFriendIds()) {
+            if (friendId.equals(currentUserId)) {
+                continue;
+            }
+
             User friend = network.getUser(friendId);
             if (friend != null) {
                 friends.add(friend);

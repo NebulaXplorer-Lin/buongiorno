@@ -32,11 +32,7 @@ public class UserService {
             return false;
         }
 
-        currentUser.setUserName(name);
-        currentUser.setWorkplace(workplace);
-        currentUser.setHometown(hometown);
-
-        return true;
+        return network.updateUserProfile(currentUser.getUserId(), name, workplace, hometown);
     }
 
     public Collection<User> getAllUsers() {
@@ -47,25 +43,48 @@ public class UserService {
         return network.getUser(userId);
     }
 
-    public Set<User> findUsersByHometown(String hometown) {
+    public Set<User> searchUsers(String searchType, String searchValue) {
         Set<User> users = new HashSet<>();
-        for (User user : network.getAllUsers()) {
-            String userHometown = user.getHometown();
-            if (userHometown != null && userHometown.equals(hometown)) {
-                users.add(user);
-            }
+        if (searchType == null || searchValue == null || searchValue.trim().isEmpty()) {
+            return users;
         }
+
+        String normalizedSearchType = searchType.trim().toLowerCase();
+        String normalizedSearchValue = searchValue.trim();
+
+        switch (normalizedSearchType) {
+            case "user id":
+                User user = network.getUser(normalizedSearchValue);
+                if (user != null) {
+                    users.add(user);
+                }
+                break;
+            case "name":
+                for (User currentUser : network.getAllUsers()) {
+                    String currentUserName = currentUser.getUserName();
+                    if (currentUserName != null && currentUserName.equalsIgnoreCase(normalizedSearchValue)) {
+                        users.add(currentUser);
+                    }
+                }
+                break;
+            case "workplace":
+                users.addAll(network.getUsersByWorkplace(normalizedSearchValue));
+                break;
+            case "hometown":
+                users.addAll(network.getUsersByHometown(normalizedSearchValue));
+                break;
+            default:
+                break;
+        }
+
         return users;
     }
 
+    public Set<User> findUsersByHometown(String hometown) {
+        return network.getUsersByHometown(hometown);
+    }
+
     public Set<User> findUsersByWorkplace(String workplace) {
-        Set<User> users = new HashSet<>();
-        for (User user : network.getAllUsers()) {
-            String userWorkplace = user.getWorkplace();
-            if (userWorkplace != null && userWorkplace.equals(workplace)) {
-                users.add(user);
-            }
-        }
-        return users;
+        return network.getUsersByWorkplace(workplace);
     }
 }

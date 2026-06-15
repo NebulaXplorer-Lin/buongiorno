@@ -18,7 +18,7 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ui.javafx.controller.LoginController">
     <center>
-        <VBox alignment="CENTER" maxWidth="360.0" spacing="16.0">
+        <VBox alignment="CENTER" maxWidth="620.0" spacing="16.0">
             <padding>
                 <Insets bottom="32.0" left="32.0" right="32.0" top="32.0" />
             </padding>
@@ -27,21 +27,23 @@
             <Label styleClass="screen-subtitle" text="Sign in to your social network" />
 
             <GridPane hgap="12.0" vgap="12.0">
-                <Label text="User ID" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <TextField fx:id="userIdField" promptText="Enter user ID"
+                <Label minWidth="90.0" text="User ID" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="userIdField" prefWidth="250.0" promptText="Enter user ID"
                            GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label fx:id="userLookupLabel" minWidth="170.0" styleClass="lookup-label"
+                       GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-                <Label text="Password" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <PasswordField fx:id="passwordField" promptText="Enter password"
+                <Label minWidth="90.0" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <PasswordField fx:id="passwordField" prefWidth="250.0" promptText="Enter password"
                                GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </GridPane>
 
-            <Button fx:id="loginButton" maxWidth="Infinity" text="Login">
+            <Button fx:id="loginButton" prefWidth="360.0" text="Login">
                 <tooltip>
                     <Tooltip text="Sign in with the entered user ID and password" />
                 </tooltip>
             </Button>
-            <Button fx:id="registerButton" maxWidth="Infinity" text="Create Account">
+            <Button fx:id="registerButton" prefWidth="360.0" text="Create Account">
                 <tooltip>
                     <Tooltip text="Open the registration screen" />
                 </tooltip>

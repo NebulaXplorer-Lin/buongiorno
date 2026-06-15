@@ -1,6 +1,7 @@
 package service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class RecommendationService {
         }
 
         Map<User, Integer> scores = new HashMap<>();
+        Set<String> candidateIds = new HashSet<>();
         Set<String> currentFriendIds = currentUser.getFriendIds();
 
         for (String friendId : currentFriendIds) {
@@ -63,8 +65,14 @@ public class RecommendationService {
                     continue;
                 }
 
-                int score = calculateRecommendationScore(currentUser, candidate);
-                scores.merge(candidate, score, Integer::sum);
+                candidateIds.add(friendOfFriendId);
+            }
+        }
+
+        for (String candidateId : candidateIds) {
+            User candidate = network.getUser(candidateId);
+            if (candidate != null) {
+                scores.put(candidate, calculateRecommendationScore(currentUser, candidate));
             }
         }
 

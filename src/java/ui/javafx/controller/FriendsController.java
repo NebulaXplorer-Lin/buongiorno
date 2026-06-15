@@ -2,11 +2,17 @@ package ui.javafx.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -15,14 +21,29 @@ import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
 public class FriendsController implements AppController {
-    @FXML
-    private TextField friendIdField;
+    private static final String ALL_HOMETOWNS = "All Hometowns";
+    private static final String ALL_WORKPLACES = "All Workplaces";
+
+    private enum TableMode {
+        CURRENT_FRIENDS,
+        SEARCH_RESULTS,
+        FRIEND_DETAILS
+    }
 
     @FXML
-    private TextField filterField;
+    private ComboBox<String> searchTypeComboBox;
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private Button searchButton;
 
     @FXML
     private Button addFriendButton;
+
+    @FXML
+    private Label selectedFriendLabel;
 
     @FXML
     private Button viewFriendsButton;
@@ -31,10 +52,19 @@ public class FriendsController implements AppController {
     private Button commonFriendsButton;
 
     @FXML
-    private Button filterHometownButton;
+    private Button detailsResetButton;
 
     @FXML
-    private Button filterWorkplaceButton;
+    private ComboBox<String> hometownFilterComboBox;
+
+    @FXML
+    private ComboBox<String> workplaceFilterComboBox;
+
+    @FXML
+    private Button sameHometownButton;
+
+    @FXML
+    private Button sameWorkplaceButton;
 
     @FXML
     private Button resetButton;
@@ -59,6 +89,9 @@ public class FriendsController implements AppController {
 
     private AppContext context;
     private Collection<User> baseUsers = new ArrayList<>();
+    private TableMode tableMode = TableMode.CURRENT_FRIENDS;
+    private User selectedFriendForDetails;
+    private boolean updatingFilterControls;
 
     @Override
     public void setApp(SocialNetworkFxApp app, AppContext context) {
@@ -68,41 +101,80 @@ public class FriendsController implements AppController {
 
     @FXML
     private void initialize() {
-        userIdColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getUserId()));
-        nameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getUserName()));
-        workplaceColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getWorkplace()));
-        hometownColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getHometown()));
+        userIdColumn.setCellValueFactory(data -> new SimpleStringProperty(valueOrBlank(data.getValue().getUserId())));
+        nameColumn.setCellValueFactory(data -> new SimpleStringProperty(valueOrBlank(data.getValue().getUserName())));
+        workplaceColumn.setCellValueFactory(data -> new SimpleStringProperty(valueOrBlank(data.getValue().getWorkplace())));
+        hometownColumn.setCellValueFactory(data -> new SimpleStringProperty(valueOrBlank(data.getValue().getHometown())));
 
+        searchTypeComboBox.setItems(FXCollections.observableArrayList("User ID", "Name", "Workplace", "Hometown"));
+        searchTypeComboBox.getSelectionModel().selectFirst();
+
+        searchButton.setOnAction(event -> handleSearch());
+        searchField.setOnAction(event -> handleSearch());
         addFriendButton.setOnAction(event -> handleAddFriend());
         viewFriendsButton.setOnAction(event -> handleViewFriends());
         commonFriendsButton.setOnAction(event -> handleCommonFriends());
-        filterHometownButton.setOnAction(event -> handleFilterByHometown());
-        filterWorkplaceButton.setOnAction(event -> handleFilterByWorkplace());
+        detailsResetButton.setOnAction(event -> handleDetailsReset());
+        hometownFilterComboBox.setOnAction(event -> handleFilterChange());
+        workplaceFilterComboBox.setOnAction(event -> handleFilterChange());
+        sameHometownButton.setOnAction(event -> handleSameHometown());
+        sameWorkplaceButton.setOnAction(event -> handleSameWorkplace());
         resetButton.setOnAction(event -> handleReset());
         refreshButton.setOnAction(event -> handleRefresh());
+
+        friendsTable.getSelectionModel().selectedItemProperty().addListener((observable, oldUser, selectedUser) -> {
+            if (tableMode == TableMode.CURRENT_FRIENDS) {
+                selectedFriendForDetails = selectedUser;
+                updateSelectedFriendLabel();
+            }
+        });
+
+        updateSelectedFriendLabel();
     }
 
     private void refreshFriends() {
-        showBaseUsers(context.getFriendService().getCurrentUserFriends());
+        selectedFriendForDetails = null;
+        updateSelectedFriendLabel();
+        showBaseUsers(context.getFriendService().getCurrentUserFriends(), TableMode.CURRENT_FRIENDS);
+    }
+
+    private void handleSearch() {
+        String searchType = searchTypeComboBox.getValue();
+        String searchValue = searchField.getText().trim();
+        if (searchValue.isEmpty()) {
+            showError("Please enter a search value.");
+            return;
+        }
+
+        if (context.getUserService().getCurrentUser() == null) {
+            showError("Please sign in before searching users.");
+            return;
+        }
+
+        List<User> searchResults = new ArrayList<>(context.getUserService().searchUsers(searchType, searchValue));
+
+        showBaseUsers(searchResults, TableMode.SEARCH_RESULTS);
+        if (searchResults.isEmpty()) {
+            showInfo("No users found.");
+        }
     }
 
     private void handleReset() {
-        filterField.clear();
-        friendsTable.getSelectionModel().clearSelection();
+        updateFilterOptions(baseUsers, ALL_HOMETOWNS, ALL_WORKPLACES);
         showUsers(baseUsers);
     }
 
     private void handleRefresh() {
-        friendIdField.clear();
-        filterField.clear();
+        searchField.clear();
+        clearFilterSelections();
         friendsTable.getSelectionModel().clearSelection();
         refreshFriends();
     }
 
     private void handleAddFriend() {
-        String friendId = friendIdField.getText().trim();
-        if (friendId.isEmpty()) {
-            showError("Please enter a friend user ID.");
+        User targetUser = friendsTable.getSelectionModel().getSelectedItem();
+        if (targetUser == null) {
+            showError("Search for a user, then select one from the table.");
             return;
         }
 
@@ -112,14 +184,9 @@ public class FriendsController implements AppController {
             return;
         }
 
+        String friendId = targetUser.getUserId();
         if (currentUser.getUserId().equals(friendId)) {
             showError("You cannot add yourself as a friend.");
-            return;
-        }
-
-        User targetUser = context.getUserService().getUserById(friendId);
-        if (targetUser == null) {
-            showError("No user found with ID: " + friendId);
             return;
         }
 
@@ -134,86 +201,214 @@ public class FriendsController implements AppController {
             return;
         }
 
-        friendIdField.clear();
+        searchField.clear();
         refreshFriends();
-        showInfo(targetUser.getUserName() + " added as a friend.");
+        showInfo(targetUser.getUserName() + " added as a friend.\n\n" + formatUserProfile(targetUser));
     }
 
     private void handleViewFriends() {
-        User selectedUser = getSelectedOrEnteredUser();
-        if (selectedUser == null) {
-            showError("Select a user or enter a user ID.");
+        User targetFriend = getSelectedFriendForDetails();
+        if (targetFriend == null) {
             return;
         }
 
-        showBaseUsers(context.getFriendService().getFriendsOfUser(selectedUser.getUserId()));
+        showBaseUsers(
+                context.getFriendService().getFriendsOfUser(targetFriend.getUserId()),
+                TableMode.FRIEND_DETAILS);
     }
 
     private void handleCommonFriends() {
-        User otherUser = getSelectedOrEnteredUser();
-        if (otherUser == null) {
-            showError("Select a user or enter a user ID.");
+        User targetFriend = getSelectedFriendForDetails();
+        if (targetFriend == null) {
             return;
         }
 
-        showBaseUsers(context.getFriendService().getCommonFriends(otherUser.getUserId()));
+        showBaseUsers(
+                context.getFriendService().getCommonFriends(targetFriend.getUserId()),
+                TableMode.FRIEND_DETAILS);
     }
 
-    private void handleFilterByHometown() {
-        String hometown = filterField.getText().trim();
-        if (hometown.isEmpty()) {
-            showError("Please enter a hometown filter.");
-            return;
-        }
-
-        Collection<User> filteredUsers = new ArrayList<>();
-        for (User user : baseUsers) {
-            if (hometown.equals(user.getHometown())) {
-                filteredUsers.add(user);
-            }
-        }
-
-        showUsers(filteredUsers);
+    private void handleDetailsReset() {
+        friendsTable.getSelectionModel().clearSelection();
+        refreshFriends();
     }
 
-    private void handleFilterByWorkplace() {
-        String workplace = filterField.getText().trim();
-        if (workplace.isEmpty()) {
-            showError("Please enter a workplace filter.");
-            return;
-        }
-
-        Collection<User> filteredUsers = new ArrayList<>();
-        for (User user : baseUsers) {
-            if (workplace.equals(user.getWorkplace())) {
-                filteredUsers.add(user);
-            }
-        }
-
-        showUsers(filteredUsers);
-    }
-
-    private User getSelectedOrEnteredUser() {
-        User selectedUser = friendsTable.getSelectionModel().getSelectedItem();
-        if (selectedUser != null) {
-            return selectedUser;
-        }
-
-        String userId = friendIdField.getText().trim();
-        if (userId.isEmpty()) {
+    private User getSelectedFriendForDetails() {
+        if (selectedFriendForDetails == null) {
+            showError("Please refresh to your main friend list and select one friend first.");
             return null;
         }
 
-        return context.getUserService().getUserById(userId);
+        return selectedFriendForDetails;
+    }
+
+    private void handleFilterChange() {
+        if (updatingFilterControls) {
+            return;
+        }
+
+        Collection<User> filteredUsers = new ArrayList<>();
+        String hometown = hometownFilterComboBox.getValue();
+        String workplace = workplaceFilterComboBox.getValue();
+
+        for (User user : baseUsers) {
+            boolean hometownMatches = isAllHometowns(hometown) || hometown.equals(user.getHometown());
+            boolean workplaceMatches = isAllWorkplaces(workplace) || workplace.equals(user.getWorkplace());
+            if (hometownMatches && workplaceMatches) {
+                filteredUsers.add(user);
+            }
+        }
+
+        showUsers(filteredUsers);
+        updateFilterOptions(filteredUsers, hometown, workplace);
+    }
+
+    private void handleSameHometown() {
+        User currentUser = context.getUserService().getCurrentUser();
+        if (currentUser == null) {
+            showError("Please sign in before filtering friends.");
+            return;
+        }
+
+        String hometown = currentUser.getHometown();
+        if (hometown == null || hometown.trim().isEmpty()) {
+            showError("Your hometown is empty.");
+            return;
+        }
+
+        if (!hometownFilterComboBox.getItems().contains(hometown)) {
+            showInfo("No users in this list share your hometown.");
+            return;
+        }
+
+        hometownFilterComboBox.getSelectionModel().select(hometown);
+        handleFilterChange();
+    }
+
+    private void handleSameWorkplace() {
+        User currentUser = context.getUserService().getCurrentUser();
+        if (currentUser == null) {
+            showError("Please sign in before filtering friends.");
+            return;
+        }
+
+        String workplace = currentUser.getWorkplace();
+        if (workplace == null || workplace.trim().isEmpty()) {
+            showError("Your workplace is empty.");
+            return;
+        }
+
+        if (!workplaceFilterComboBox.getItems().contains(workplace)) {
+            showInfo("No users in this list share your workplace.");
+            return;
+        }
+
+        workplaceFilterComboBox.getSelectionModel().select(workplace);
+        handleFilterChange();
     }
 
     private void showUsers(Collection<User> users) {
-        friendsTable.setItems(FXCollections.observableArrayList(users));
+        friendsTable.setItems(FXCollections.observableArrayList(sortUsers(users)));
     }
 
-    private void showBaseUsers(Collection<User> users) {
+    private void showBaseUsers(Collection<User> users, TableMode mode) {
+        tableMode = mode;
         baseUsers = new ArrayList<>(users);
+        updateFilterOptions(baseUsers, ALL_HOMETOWNS, ALL_WORKPLACES);
         showUsers(baseUsers);
+        friendsTable.getSelectionModel().clearSelection();
+    }
+
+    private void clearFilterSelections() {
+        updatingFilterControls = true;
+        hometownFilterComboBox.getSelectionModel().select(ALL_HOMETOWNS);
+        workplaceFilterComboBox.getSelectionModel().select(ALL_WORKPLACES);
+        updatingFilterControls = false;
+    }
+
+    private void updateFilterOptions(Collection<User> users, String selectedHometown, String selectedWorkplace) {
+        TreeSet<String> hometowns = new TreeSet<>();
+        TreeSet<String> workplaces = new TreeSet<>();
+
+        for (User user : users) {
+            addNonBlank(hometowns, user.getHometown());
+            addNonBlank(workplaces, user.getWorkplace());
+        }
+
+        updatingFilterControls = true;
+        List<String> hometownOptions = new ArrayList<>();
+        hometownOptions.add(ALL_HOMETOWNS);
+        hometownOptions.addAll(hometowns);
+
+        List<String> workplaceOptions = new ArrayList<>();
+        workplaceOptions.add(ALL_WORKPLACES);
+        workplaceOptions.addAll(workplaces);
+
+        hometownFilterComboBox.setItems(FXCollections.observableArrayList(hometownOptions));
+        workplaceFilterComboBox.setItems(FXCollections.observableArrayList(workplaceOptions));
+        selectFilterValue(hometownFilterComboBox, selectedHometown, hometownOptions, ALL_HOMETOWNS);
+        selectFilterValue(workplaceFilterComboBox, selectedWorkplace, workplaceOptions, ALL_WORKPLACES);
+        updatingFilterControls = false;
+    }
+
+    private void selectFilterValue(
+            ComboBox<String> comboBox,
+            String selectedValue,
+            List<String> options,
+            String defaultValue) {
+        if (selectedValue != null && options.contains(selectedValue)) {
+            comboBox.getSelectionModel().select(selectedValue);
+        } else {
+            comboBox.getSelectionModel().select(defaultValue);
+        }
+    }
+
+    private List<User> sortUsers(Collection<User> users) {
+        return users.stream()
+                .sorted(Comparator.comparing(User::getUserId))
+                .toList();
+    }
+
+    private void updateSelectedFriendLabel() {
+        if (selectedFriendLabel == null) {
+            return;
+        }
+
+        if (selectedFriendForDetails == null) {
+            selectedFriendLabel.setText("Selected friend: -");
+            return;
+        }
+
+        selectedFriendLabel.setText("Selected friend: "
+                + selectedFriendForDetails.getUserName()
+                + " ("
+                + selectedFriendForDetails.getUserId()
+                + ")");
+    }
+
+    private void addNonBlank(TreeSet<String> values, String value) {
+        if (value != null && !value.trim().isEmpty()) {
+            values.add(value);
+        }
+    }
+
+    private String valueOrBlank(String value) {
+        return value != null ? value : "";
+    }
+
+    private boolean isAllHometowns(String value) {
+        return value == null || ALL_HOMETOWNS.equals(value);
+    }
+
+    private boolean isAllWorkplaces(String value) {
+        return value == null || ALL_WORKPLACES.equals(value);
+    }
+
+    private String formatUserProfile(User user) {
+        return "User ID: " + user.getUserId()
+                + "\nName: " + user.getUserName()
+                + "\nWorkplace: " + user.getWorkplace()
+                + "\nHometown: " + user.getHometown();
     }
 
     private void showError(String message) {
