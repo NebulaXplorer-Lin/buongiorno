@@ -9,6 +9,12 @@ import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+/**
+ * Hashes and verifies passwords using salted PBKDF2-HMAC-SHA256.
+ *
+ * <p>Encoded hashes use the format
+ * {@code pbkdf2-sha256$iterations$Base64Salt$Base64Hash}.</p>
+ */
 public final class PasswordUtil {
     private static final String ALGORITHM_NAME = "pbkdf2-sha256";
     private static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256";
@@ -24,6 +30,14 @@ public final class PasswordUtil {
     private PasswordUtil() {
     }
 
+    /**
+     * Creates a salted encoded password hash.
+     *
+     * @param password plain-text password
+     * @return encoded PBKDF2 password hash
+     * @throws IllegalArgumentException if the password is null or empty
+     * @throws IllegalStateException if PBKDF2 is unavailable in the runtime
+     */
     public static String hashPassword(String password) {
         if (password == null || password.isEmpty()) {
             throw new IllegalArgumentException("Password cannot be empty.");
@@ -41,6 +55,15 @@ public final class PasswordUtil {
                 Base64.getEncoder().encodeToString(hash));
     }
 
+    /**
+     * Verifies a password against an encoded PBKDF2 hash.
+     *
+     * @param password plain-text password to verify
+     * @param storedPasswordHash encoded password hash
+     * @return {@code true} when the password matches; {@code false} for a
+     *         mismatch or malformed encoded hash
+     * @throws IllegalStateException if PBKDF2 is unavailable in the runtime
+     */
     public static boolean verifyPassword(String password, String storedPasswordHash) {
         if (password == null || password.isEmpty()
                 || storedPasswordHash == null || storedPasswordHash.isEmpty()) {

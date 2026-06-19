@@ -8,12 +8,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import model.SocialNetwork;
 import model.User;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
+/**
+ * Controls login, network import/export, registration navigation, and
+ * application exit.
+ */
 public class LoginController implements AppController {
     @FXML
     private TextField userIdField;
@@ -42,6 +47,15 @@ public class LoginController implements AppController {
     private SocialNetworkFxApp app;
     private AppContext context;
 
+    /**
+     * Creates a login controller for use by the FXML loader.
+     */
+    public LoginController() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setApp(SocialNetworkFxApp app, AppContext context) {
         this.app = app;
@@ -107,9 +121,10 @@ public class LoginController implements AppController {
             updateUserLookupLabel();
             showInfo("Network data loaded. Please sign in.");
         } catch (IllegalArgumentException exception) {
-            showError(exception.getMessage());
+            showImportError(exception.getMessage());
         } catch (Exception exception) {
-            showError("Network data loading error.");
+            showImportError("Unexpected error while importing network data: "
+                    + exception.getClass().getSimpleName());
         }
     }
 
@@ -168,6 +183,21 @@ public class LoginController implements AppController {
 
     private void showInfo(String message) {
         showAlert(Alert.AlertType.INFORMATION, "Information", message);
+    }
+
+    private void showImportError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Network Import Error");
+        alert.setHeaderText("The selected file contains invalid network data.");
+
+        TextArea errorDetails = new TextArea(message);
+        errorDetails.setEditable(false);
+        errorDetails.setWrapText(true);
+        errorDetails.setPrefColumnCount(80);
+        errorDetails.setPrefRowCount(14);
+        alert.getDialogPane().setContent(errorDetails);
+        alert.setResizable(true);
+        alert.showAndWait();
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {

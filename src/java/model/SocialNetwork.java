@@ -8,17 +8,31 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Stores users and undirected friendships, with secondary indexes for
+ * workplace and hometown searches.
+ */
 public class SocialNetwork {
     private Map<String, User> users;
     private Map<String, Set<String>> usersByWorkplace;
     private Map<String, Set<String>> usersByHometown;
 
+    /**
+     * Creates an empty social network.
+     */
     public SocialNetwork() {
         users = new HashMap<>();
         usersByWorkplace = new HashMap<>();
         usersByHometown = new HashMap<>();
     }
 
+    /**
+     * Adds a user and updates the attribute indexes.
+     *
+     * @param user user to add
+     * @return {@code true} when the user was added; {@code false} for a null
+     *         user, null ID, or duplicate ID
+     */
     public boolean addUser(User user) {
         if (user == null)
             return false;
@@ -37,26 +51,64 @@ public class SocialNetwork {
 
     }
 
+    /**
+     * Looks up a user by ID.
+     *
+     * @param userId user identifier
+     * @return the matching user, or {@code null} when absent
+     */
     public User getUser(String userId) {
         return users.get(userId);
     }
 
+    /**
+     * Tests whether a user ID exists.
+     *
+     * @param userId user identifier
+     * @return {@code true} when the ID is registered
+     */
     public boolean containsUser(String userId) {
         return users.containsKey(userId);
     }
 
+    /**
+     * Returns a read-only view of all users.
+     *
+     * @return all registered users
+     */
     public Collection<User> getAllUsers() {
         return Collections.unmodifiableCollection(users.values());
     }
 
+    /**
+     * Finds users whose workplace matches case-insensitively.
+     *
+     * @param workplace workplace to search for
+     * @return matching users, or an empty set
+     */
     public Set<User> getUsersByWorkplace(String workplace) {
         return getUsersFromIndex(usersByWorkplace, workplace);
     }
 
+    /**
+     * Finds users whose hometown matches case-insensitively.
+     *
+     * @param hometown hometown to search for
+     * @return matching users, or an empty set
+     */
     public Set<User> getUsersByHometown(String hometown) {
         return getUsersFromIndex(usersByHometown, hometown);
     }
 
+    /**
+     * Updates a user's profile and keeps the secondary indexes synchronized.
+     *
+     * @param userId user identifier
+     * @param name new display name
+     * @param workplace new workplace
+     * @param hometown new hometown
+     * @return {@code true} when the user exists and was updated
+     */
     public boolean updateUserProfile(String userId, String name, String workplace, String hometown) {
         User user = users.get(userId);
         if (user == null) {
@@ -72,6 +124,13 @@ public class SocialNetwork {
         return true;
     }
 
+    /**
+     * Adds an undirected friendship between two existing users.
+     *
+     * @param userId1 first user ID
+     * @param userId2 second user ID
+     * @return {@code true} when both users exist and the operation was applied
+     */
     public boolean addFriendship(String userId1, String userId2) {
         if (userId1 == null || userId2 == null)
             return false;
@@ -91,6 +150,13 @@ public class SocialNetwork {
 
     }
 
+    /**
+     * Removes an undirected friendship between two existing users.
+     *
+     * @param userId1 first user ID
+     * @param userId2 second user ID
+     * @return {@code true} when both users exist and the operation was applied
+     */
     public boolean removeFriendship(String userId1, String userId2) {
         if (userId1 == null || userId2 == null)
             return false;
@@ -109,6 +175,9 @@ public class SocialNetwork {
         return true;
     }
 
+    /**
+     * Removes all users, friendships, and index entries.
+     */
     public void clear() {
         users.clear();
         usersByWorkplace.clear();

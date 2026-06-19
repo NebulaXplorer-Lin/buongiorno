@@ -15,6 +15,9 @@ import model.User;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
+/**
+ * Controls display and acceptance of scored friend recommendations.
+ */
 public class RecommendationsController implements AppController {
     @FXML
     private Button refreshButton;
@@ -42,6 +45,15 @@ public class RecommendationsController implements AppController {
 
     private AppContext context;
 
+    /**
+     * Creates a recommendations controller for use by the FXML loader.
+     */
+    public RecommendationsController() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setApp(SocialNetworkFxApp app, AppContext context) {
         this.context = context;
@@ -108,19 +120,38 @@ public class RecommendationsController implements AppController {
         alert.showAndWait();
     }
 
+    /**
+     * Immutable table-row model containing a recommended user and score.
+     */
     public static class RecommendationRow {
         private final User user;
         private final int score;
 
+        /**
+         * Creates a recommendation row.
+         *
+         * @param user recommended user
+         * @param score recommendation score
+         */
         public RecommendationRow(User user, int score) {
             this.user = user;
             this.score = score;
         }
 
+        /**
+         * Returns the recommended user.
+         *
+         * @return the recommended user
+         */
         public User getUser() {
             return user;
         }
 
+        /**
+         * Returns the recommendation score.
+         *
+         * @return the recommendation score
+         */
         public int getScore() {
             return score;
         }

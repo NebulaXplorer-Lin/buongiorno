@@ -11,16 +11,32 @@ import model.Session;
 import model.SocialNetwork;
 import model.User;
 
+/**
+ * Generates friend recommendations from the current user's friends-of-friends
+ * graph.
+ */
 public class RecommendationService {
 
     private SocialNetwork network;
     private Session session;
 
+    /**
+     * Creates a recommendation service.
+     *
+     * @param network social network to inspect
+     * @param session source of the current user ID
+     */
     public RecommendationService(SocialNetwork network, Session session) {
         this.network = network;
         this.session = session;
     }
 
+    /**
+     * Returns recommended users ordered by descending recommendation score.
+     *
+     * @return ordered recommendations, or an empty list when no user is logged
+     *         in
+     */
     public List<User> recommendFriends() {
         Map<User, Integer> scoredRecommendations = recommendFriendsWithScores();
 
@@ -30,6 +46,13 @@ public class RecommendationService {
         return recommendations;
     }
 
+    /**
+     * Scores friend-of-friend candidates. Existing friends and the current user
+     * are excluded. Candidates receive two points for a shared workplace, two
+     * points for a shared hometown, and one point per mutual friend.
+     *
+     * @return a map from recommended user to recommendation score
+     */
     public Map<User, Integer> recommendFriendsWithScores() {
         String currentUserId = session.getCurrentUserId();
         if (currentUserId == null) {

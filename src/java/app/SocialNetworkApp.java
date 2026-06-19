@@ -8,6 +8,10 @@ import service.FriendService;
 import service.RecommendationService;
 import service.UserService;
 
+/**
+ * Creates and connects the model, persistence, and service-layer objects used
+ * by the application.
+ */
 public class SocialNetworkApp {
     private final SocialNetwork network;
     private final Session session;
@@ -17,6 +21,10 @@ public class SocialNetworkApp {
     private final RecommendationService recommendationService;
     private final NetworkFileManager fileManager;
 
+    /**
+     * Creates an application composition root backed by an empty social network
+     * and a new session.
+     */
     public SocialNetworkApp() {
         network = new SocialNetwork();
         session = new Session();
@@ -28,6 +36,11 @@ public class SocialNetworkApp {
         fileManager = new NetworkFileManager();
     }
 
+    /**
+     * Creates a JavaFX context containing the application's shared objects.
+     *
+     * @return a context for use by JavaFX controllers
+     */
     public ui.javafx.AppContext createContext() {
         return new ui.javafx.AppContext(
                 network,

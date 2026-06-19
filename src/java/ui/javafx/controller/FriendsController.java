@@ -21,6 +21,10 @@ import model.User;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
+/**
+ * Controls friend listing, searching, filtering, relationship inspection, and
+ * add/remove operations.
+ */
 public class FriendsController implements AppController {
     private static final String ALL_HOMETOWNS = "All Hometowns";
     private static final String ALL_WORKPLACES = "All Workplaces";
@@ -98,6 +102,15 @@ public class FriendsController implements AppController {
     private User selectedFriendForDetails;
     private boolean updatingFilterControls;
 
+    /**
+     * Creates a friends controller for use by the FXML loader.
+     */
+    public FriendsController() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setApp(SocialNetworkFxApp app, AppContext context) {
         this.context = context;

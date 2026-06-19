@@ -15,7 +15,6 @@ USER,u014,Mia,Google,Dundee,pbkdf2-sha256$600000$d4P0xg6BQKxhWNdlLL1tvg==$jaiCTz
 USER,u015,Noah,Amazon,London,pbkdf2-sha256$600000$enLN+6FAj00NZWzhPIRbvg==$/d/cw6dtGGEr9GO+/IEQyV+GMhq6EL29ASLdjL3RaLE=
 USER,u016,Olivia,Meta,Dundee,pbkdf2-sha256$600000$2XEK2ZXD89oPoueHEuPR4w==$rWm1+ctnuuLzqWBa7dxYfgtDUQ/gdanXRpjwcBK3NmI=
 USER,u017,Peter,OpenAI,Glasgow,pbkdf2-sha256$600000$AF53X5QqWyqpqRldmnF7Vw==$DMenr3Zc1DPHMfrsiq2+CBE9g8vRZowZ9byCCx5suKc=
-FRIEND,u001,u002
 FRIEND,u001,u003
 FRIEND,u001,u006
 FRIEND,u001,u011

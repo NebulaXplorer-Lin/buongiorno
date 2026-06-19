@@ -12,6 +12,9 @@ import model.User;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
+/**
+ * Controls dashboard navigation, child views, and logout.
+ */
 public class DashboardController implements AppController {
     @FXML
     private Label loggedInUserLabel;
@@ -43,6 +46,15 @@ public class DashboardController implements AppController {
     private SocialNetworkFxApp app;
     private AppContext context;
 
+    /**
+     * Creates a dashboard controller for use by the FXML loader.
+     */
+    public DashboardController() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setApp(SocialNetworkFxApp app, AppContext context) {
         this.app = app;

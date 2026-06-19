@@ -9,6 +9,9 @@ import model.User;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
+/**
+ * Controls display and editing of the current user's profile.
+ */
 public class ProfileController implements AppController {
     @FXML
     private Label userIdLabel;
@@ -36,6 +39,15 @@ public class ProfileController implements AppController {
 
     private AppContext context;
 
+    /**
+     * Creates a profile controller for use by the FXML loader.
+     */
+    public ProfileController() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setApp(SocialNetworkFxApp app, AppContext context) {
         this.context = context;

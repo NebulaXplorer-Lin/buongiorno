@@ -9,10 +9,22 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import ui.javafx.controller.AppController;
 
+/**
+ * JavaFX application responsible for stage setup and screen navigation.
+ */
 public class SocialNetworkFxApp extends Application {
     private AppContext context;
     private Stage primaryStage;
 
+    /**
+     * Creates the JavaFX application instance.
+     */
+    public SocialNetworkFxApp() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
@@ -38,6 +50,11 @@ public class SocialNetworkFxApp extends Application {
         alert.showAndWait();
     }
 
+    /**
+     * Displays the login screen and sizes the stage to its content.
+     *
+     * @throws Exception if the FXML view cannot be loaded
+     */
     public void showLoginScreen() throws Exception {
         setScene("/ui/javafx/view/login.fxml");
         primaryStage.setMaximized(false);
@@ -45,10 +62,20 @@ public class SocialNetworkFxApp extends Application {
         primaryStage.centerOnScreen();
     }
 
+    /**
+     * Displays the registration screen.
+     *
+     * @throws Exception if the FXML view cannot be loaded
+     */
     public void showRegisterScreen() throws Exception {
         setScene("/ui/javafx/view/register.fxml");
     }
 
+    /**
+     * Displays the dashboard and maximizes the stage.
+     *
+     * @throws Exception if the FXML view cannot be loaded
+     */
     public void showDashboardScreen() throws Exception {
         setScene("/ui/javafx/view/dashboard.fxml");
         primaryStage.setMaximized(true);
@@ -71,10 +98,20 @@ public class SocialNetworkFxApp extends Application {
         return root;
     }
 
+    /**
+     * Returns the shared application context.
+     *
+     * @return the shared application context
+     */
     public AppContext getContext() {
         return context;
     }
 
+    /**
+     * Returns the primary JavaFX stage.
+     *
+     * @return the primary JavaFX stage
+     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }

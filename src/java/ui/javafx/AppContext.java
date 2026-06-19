@@ -9,6 +9,9 @@ import service.FriendService;
 import service.RecommendationService;
 import service.UserService;
 
+/**
+ * Holds shared application objects for JavaFX controllers.
+ */
 public class AppContext {
     private final SocialNetwork network;
     private final Session session;
@@ -18,6 +21,17 @@ public class AppContext {
     private final RecommendationService recommendationService;
     private final NetworkFileManager fileManager;
 
+    /**
+     * Creates a controller context.
+     *
+     * @param network shared social network
+     * @param session shared session
+     * @param authService authentication service
+     * @param userService user service
+     * @param friendService friendship service
+     * @param recommendationService recommendation service
+     * @param fileManager persistence service
+     */
     public AppContext(
             SocialNetwork network,
             Session session,
@@ -35,34 +49,75 @@ public class AppContext {
         this.fileManager = fileManager;
     }
 
+    /**
+     * Returns the shared social network.
+     *
+     * @return the shared social network
+     */
     public SocialNetwork getNetwork() {
         return network;
     }
 
+    /**
+     * Returns the shared session.
+     *
+     * @return the shared session
+     */
     public Session getSession() {
         return session;
     }
 
+    /**
+     * Returns the authentication service.
+     *
+     * @return the authentication service
+     */
     public AuthService getAuthService() {
         return authService;
     }
 
+    /**
+     * Returns the user service.
+     *
+     * @return the user service
+     */
     public UserService getUserService() {
         return userService;
     }
 
+    /**
+     * Returns the friendship service.
+     *
+     * @return the friendship service
+     */
     public FriendService getFriendService() {
         return friendService;
     }
 
+    /**
+     * Returns the recommendation service.
+     *
+     * @return the recommendation service
+     */
     public RecommendationService getRecommendationService() {
         return recommendationService;
     }
 
+    /**
+     * Returns the network file manager.
+     *
+     * @return the network file manager
+     */
     public NetworkFileManager getFileManager() {
         return fileManager;
     }
 
+    /**
+     * Replaces the contents of the shared network while retaining the same
+     * network object used by all services.
+     *
+     * @param loadedNetwork network data to copy into the shared model
+     */
     public void replaceCurrentNetworkData(SocialNetwork loadedNetwork) {
         network.clear();
 

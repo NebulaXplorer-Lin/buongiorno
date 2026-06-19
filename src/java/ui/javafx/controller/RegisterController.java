@@ -8,6 +8,9 @@ import javafx.scene.control.TextField;
 import ui.javafx.AppContext;
 import ui.javafx.SocialNetworkFxApp;
 
+/**
+ * Controls user registration and navigation back to the login screen.
+ */
 public class RegisterController implements AppController {
     @FXML
     private TextField userIdField;
@@ -33,6 +36,15 @@ public class RegisterController implements AppController {
     private SocialNetworkFxApp app;
     private AppContext context;
 
+    /**
+     * Creates a registration controller for use by the FXML loader.
+     */
+    public RegisterController() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setApp(SocialNetworkFxApp app, AppContext context) {
         this.app = app;
