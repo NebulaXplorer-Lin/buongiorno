@@ -69,6 +69,27 @@ public class FriendService {
         return network.addFriendship(currentUserId, friendId);
     }
 
+    public boolean removeFriendFromCurrentUser(String friendId) {
+        String currentUserId = session.getCurrentUserId();
+        if (currentUserId == null || friendId == null) {
+            return false;
+        }
+
+        if (!network.containsUser(friendId)) {
+            return false;
+        }
+
+        if (currentUserId.equals(friendId)) {
+            return false;
+        }
+
+        if (!areFriends(currentUserId, friendId)) {
+            return false;
+        }
+
+        return network.removeFriendship(currentUserId, friendId);
+    }
+
     public Set<User> getCommonFriends(String otherUserId) {
         String currentUserId = session.getCurrentUserId();
         if (currentUserId == null) {

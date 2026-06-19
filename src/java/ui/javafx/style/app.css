@@ -101,7 +101,6 @@
 #addFriendButton,
 #viewFriendsButton,
 #commonFriendsButton,
-#detailsResetButton,
 #sameHometownButton,
 #sameWorkplaceButton {
     -fx-background-color: #2563eb;
@@ -118,11 +117,21 @@
 #addFriendButton:hover,
 #viewFriendsButton:hover,
 #commonFriendsButton:hover,
-#detailsResetButton:hover,
 #sameHometownButton:hover,
 #sameWorkplaceButton:hover {
     -fx-background-color: #1d4ed8;
     -fx-border-color: #1d4ed8;
+}
+
+#removeFriendButton {
+    -fx-background-color: #fee2e2;
+    -fx-border-color: #f87171;
+    -fx-text-fill: #b91c1c;
+}
+
+#removeFriendButton:hover {
+    -fx-background-color: #fecaca;
+    -fx-border-color: #ef4444;
 }
 
 #cancelButton,

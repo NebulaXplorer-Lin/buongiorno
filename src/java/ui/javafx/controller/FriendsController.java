@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -27,7 +28,8 @@ public class FriendsController implements AppController {
     private enum TableMode {
         CURRENT_FRIENDS,
         SEARCH_RESULTS,
-        FRIEND_DETAILS
+        FRIENDS_OF_FRIEND,
+        COMMON_FRIENDS
     }
 
     @FXML
@@ -41,6 +43,9 @@ public class FriendsController implements AppController {
 
     @FXML
     private Button addFriendButton;
+
+    @FXML
+    private Button removeFriendButton;
 
     @FXML
     private Label selectedFriendLabel;
@@ -112,6 +117,7 @@ public class FriendsController implements AppController {
         searchButton.setOnAction(event -> handleSearch());
         searchField.setOnAction(event -> handleSearch());
         addFriendButton.setOnAction(event -> handleAddFriend());
+        removeFriendButton.setOnAction(event -> handleRemoveFriend());
         viewFriendsButton.setOnAction(event -> handleViewFriends());
         commonFriendsButton.setOnAction(event -> handleCommonFriends());
         detailsResetButton.setOnAction(event -> handleDetailsReset());
@@ -127,9 +133,11 @@ public class FriendsController implements AppController {
                 selectedFriendForDetails = selectedUser;
                 updateSelectedFriendLabel();
             }
+            updateRemoveFriendButton();
         });
 
         updateSelectedFriendLabel();
+        updateRemoveFriendButton();
     }
 
     private void refreshFriends() {
@@ -206,15 +214,70 @@ public class FriendsController implements AppController {
         showInfo(targetUser.getUserName() + " added as a friend.\n\n" + formatUserProfile(targetUser));
     }
 
+    private void handleRemoveFriend() {
+        if (tableMode == TableMode.SEARCH_RESULTS) {
+            showError("Friends cannot be removed from search results.");
+            return;
+        }
+
+        User targetFriend = friendsTable.getSelectionModel().getSelectedItem();
+        if (targetFriend == null) {
+            showError("Please select a friend to remove.");
+            return;
+        }
+
+        User currentUser = context.getUserService().getCurrentUser();
+        if (currentUser == null
+                || !context.getFriendService().areFriends(currentUser.getUserId(), targetFriend.getUserId())) {
+            showError("You can only remove users who are currently your friends.");
+            return;
+        }
+
+        TableMode removalMode = tableMode;
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Remove Friend");
+        confirmation.setHeaderText("Remove this friend?");
+        confirmation.setContentText(targetFriend.getUserName()
+                + " ("
+                + targetFriend.getUserId()
+                + ") will be removed from your friend list.");
+
+        if (confirmation.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        }
+
+        boolean removeSucceeded = context.getFriendService()
+                .removeFriendFromCurrentUser(targetFriend.getUserId());
+        if (!removeSucceeded) {
+            showError("Could not remove friend.");
+            return;
+        }
+
+        if (removalMode == TableMode.FRIENDS_OF_FRIEND) {
+            showFriendsOfSelectedFriend();
+            showWarning(
+                    "Friend removed, but still shown",
+                    targetFriend.getUserName()
+                            + " has been removed from your friend list.\n\n"
+                            + "However, this user is still a friend of "
+                            + selectedFriendForDetails.getUserName()
+                            + ", so they remain visible in this Friend's Friends list.");
+        } else if (removalMode == TableMode.COMMON_FRIENDS) {
+            showCommonFriendsWithSelectedFriend();
+            showInfo(targetFriend.getUserName() + " removed from your friends.");
+        } else {
+            refreshFriends();
+            showInfo(targetFriend.getUserName() + " removed from your friends.");
+        }
+    }
+
     private void handleViewFriends() {
         User targetFriend = getSelectedFriendForDetails();
         if (targetFriend == null) {
             return;
         }
 
-        showBaseUsers(
-                context.getFriendService().getFriendsOfUser(targetFriend.getUserId()),
-                TableMode.FRIEND_DETAILS);
+        showFriendsOfSelectedFriend();
     }
 
     private void handleCommonFriends() {
@@ -223,9 +286,19 @@ public class FriendsController implements AppController {
             return;
         }
 
+        showCommonFriendsWithSelectedFriend();
+    }
+
+    private void showFriendsOfSelectedFriend() {
         showBaseUsers(
-                context.getFriendService().getCommonFriends(targetFriend.getUserId()),
-                TableMode.FRIEND_DETAILS);
+                context.getFriendService().getFriendsOfUser(selectedFriendForDetails.getUserId()),
+                TableMode.FRIENDS_OF_FRIEND);
+    }
+
+    private void showCommonFriendsWithSelectedFriend() {
+        showBaseUsers(
+                context.getFriendService().getCommonFriends(selectedFriendForDetails.getUserId()),
+                TableMode.COMMON_FRIENDS);
     }
 
     private void handleDetailsReset() {
@@ -321,6 +394,7 @@ public class FriendsController implements AppController {
         updateFilterOptions(baseUsers, ALL_HOMETOWNS, ALL_WORKPLACES);
         showUsers(baseUsers);
         friendsTable.getSelectionModel().clearSelection();
+        updateRemoveFriendButton();
     }
 
     private void clearFilterSelections() {
@@ -390,6 +464,25 @@ public class FriendsController implements AppController {
                 + ")");
     }
 
+    private void updateRemoveFriendButton() {
+        if (removeFriendButton == null || friendsTable == null) {
+            return;
+        }
+
+        User selectedUser = friendsTable.getSelectionModel().getSelectedItem();
+        User currentUser = context == null ? null : context.getUserService().getCurrentUser();
+        boolean supportsRemoval = tableMode == TableMode.CURRENT_FRIENDS
+                || tableMode == TableMode.FRIENDS_OF_FRIEND
+                || tableMode == TableMode.COMMON_FRIENDS;
+        boolean isCurrentFriend = selectedUser != null
+                && currentUser != null
+                && context.getFriendService().areFriends(currentUser.getUserId(), selectedUser.getUserId());
+        boolean canRemoveFriend = supportsRemoval && isCurrentFriend;
+        removeFriendButton.setDisable(!canRemoveFriend);
+        removeFriendButton.setVisible(canRemoveFriend);
+        removeFriendButton.setManaged(canRemoveFriend);
+    }
+
     private void addNonBlank(TreeSet<String> values, String value) {
         if (value != null && !value.trim().isEmpty()) {
             values.add(value);
@@ -421,6 +514,10 @@ public class FriendsController implements AppController {
 
     private void showInfo(String message) {
         showAlert(Alert.AlertType.INFORMATION, "Information", message);
+    }
+
+    private void showWarning(String title, String message) {
+        showAlert(Alert.AlertType.WARNING, title, message);
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {

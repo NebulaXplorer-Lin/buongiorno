@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: util.PasswordUtilTest
+Test set: persistence.NetworkFileManagerTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.858 s -- in util.PasswordUtilTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.057 s -- in persistence.NetworkFileManagerTest

@@ -63,6 +63,11 @@
                         <Tooltip text="Clear selected friend and return to your full friend list" />
                     </tooltip>
                 </Button>
+                <Button fx:id="removeFriendButton" text="Remove Friend">
+                    <tooltip>
+                        <Tooltip text="Remove the selected user from your friend list" />
+                    </tooltip>
+                </Button>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="8.0">
                 <Label minWidth="120.0" styleClass="row-title" text="Filter Friends" />
