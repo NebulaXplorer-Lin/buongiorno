@@ -1,0 +1,262 @@
+@startuml Buongiorno_Class_Diagram
+
+title Buongiorno Social Network — Class Diagram
+
+!pragma layout smetana
+top to bottom direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam linetype polyline
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam ArrowColor #52606D
+skinparam ArrowThickness 1
+skinparam packageStyle rectangle
+skinparam packageBorderColor #7B8794
+skinparam packageFontStyle bold
+skinparam classAttributeIconSize 0
+skinparam classBorderThickness 1
+skinparam classFontStyle bold
+skinparam classStereotypeFontStyle plain
+skinparam nodesep 18
+skinparam ranksep 32
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #52606D
+    FontColor #172B4D
+    AttributeFontColor #253858
+}
+hide circle
+
+package "Application" #EAF2FF {
+    class Main #D9E8FF {
+        {static} +main(args: String[]): void
+    }
+
+    class SocialNetworkApp #D9E8FF {
+        -network: SocialNetwork
+        -session: Session
+        -authService: AuthService
+        -userService: UserService
+        -friendService: FriendService
+        -recommendationService: RecommendationService
+        -fileManager: NetworkFileManager
+        --
+        +SocialNetworkApp()
+        +createContext(): AppContext
+    }
+}
+
+package "JavaFX UI" #FFF3E5 {
+    class SocialNetworkFxApp #FFE4C2 {
+        -context: AppContext
+        -primaryStage: Stage
+        --
+        +start(primaryStage: Stage): void
+        +showLoginScreen(): void
+        +showRegisterScreen(): void
+        +showDashboardScreen(): void
+    }
+
+    class AppContext #FFE4C2 {
+        -network: SocialNetwork
+        -session: Session
+        -authService: AuthService
+        -userService: UserService
+        -friendService: FriendService
+        -recommendationService: RecommendationService
+        -fileManager: NetworkFileManager
+        --
+        +getNetwork(): SocialNetwork
+        +getSession(): Session
+        +getAuthService(): AuthService
+        +getUserService(): UserService
+        +getFriendService(): FriendService
+        +getRecommendationService(): RecommendationService
+        +getFileManager(): NetworkFileManager
+        +replaceCurrentNetworkData(loadedNetwork: SocialNetwork): void
+    }
+
+    interface AppController #FFE4C2 {
+        +setApp(app: SocialNetworkFxApp, context: AppContext): void
+    }
+
+    class LoginController #FFF8EF
+    class RegisterController #FFF8EF
+    class DashboardController #FFF8EF
+    class ProfileController #FFF8EF
+    class FriendsController #FFF8EF
+    class RecommendationsController #FFF8EF
+}
+
+package "Service" #EAF8EE {
+    class AuthService #D9F1E0 {
+        -network: SocialNetwork
+        -session: Session
+        --
+        +register(userId: String, password: String, name: String,\nworkplace: String, hometown: String): boolean
+        +login(userId: String, password: String): boolean
+        +logout(): void
+        +isUserIdTaken(userId: String): boolean
+    }
+
+    class UserService #D9F1E0 {
+        -network: SocialNetwork
+        -session: Session
+        --
+        +getCurrentUser(): User
+        +updateCurrentUserProfile(name: String, workplace: String,\nhometown: String): boolean
+        +getAllUsers(): Collection<User>
+        +getUserById(userId: String): User
+        +searchUsers(searchType: String, searchValue: String): Set<User>
+        +findUsersByHometown(hometown: String): Set<User>
+        +findUsersByWorkplace(workplace: String): Set<User>
+    }
+
+    class FriendService #D9F1E0 {
+        -network: SocialNetwork
+        -session: Session
+        --
+        +getCurrentUserFriends(): List<User>
+        +getFriendsOfUser(userId: String): List<User>
+        +addFriendToCurrentUser(friendId: String): boolean
+        +removeFriendFromCurrentUser(friendId: String): boolean
+        +getCommonFriends(otherUserId: String): Set<User>
+        +filterCurrentUserFriendsByHometown(hometown: String): List<User>
+        +filterCurrentUserFriendsByWorkplace(workplace: String): List<User>
+        +areFriends(userId1: String, userId2: String): boolean
+    }
+
+    class RecommendationService #D9F1E0 {
+        -network: SocialNetwork
+        -session: Session
+        --
+        +recommendFriends(): List<User>
+        +recommendFriendsWithScores(): Map<User, Integer>
+        -calculateRecommendationScore(currentUser: User,\ncandidate: User): int
+    }
+}
+
+package "Domain Model" #F1ECFF {
+    class SocialNetwork #E4D9FF {
+        -users: Map<String, User>
+        -usersByWorkplace: Map<String, Set<String>>
+        -usersByHometown: Map<String, Set<String>>
+        --
+        +addUser(user: User): boolean
+        +getUser(userId: String): User
+        +containsUser(userId: String): boolean
+        +getAllUsers(): Collection<User>
+        +getUsersByWorkplace(workplace: String): Set<User>
+        +getUsersByHometown(hometown: String): Set<User>
+        +updateUserProfile(userId: String, name: String,\nworkplace: String, hometown: String): boolean
+        +addFriendship(userId1: String, userId2: String): boolean
+        +removeFriendship(userId1: String, userId2: String): boolean
+        +clear(): void
+    }
+
+    class User #E4D9FF {
+        -userId: String
+        -userName: String
+        -workplace: String
+        -hometown: String
+        -passwordHash: String
+        -friendIds: Set<String>
+        --
+        +getUserId(): String
+        +getUserName(): String
+        +getWorkplace(): String
+        +getHometown(): String
+        +getPasswordHash(): String
+        +getFriendIds(): Set<String>
+        +setUserName(userName: String): void
+        +setWorkplace(workplace: String): void
+        +setHometown(hometown: String): void
+        +setPasswordHash(passwordHash: String): void
+        +addFriend(friendId: String): void
+        +removeFriend(friendId: String): void
+        +hasFriend(friendId: String): boolean
+    }
+
+    class Session #E4D9FF {
+        ~currentUserId: String
+        --
+        +isLoggedIn(): boolean
+        +login(userId: String): void
+        +logout(): void
+        +getCurrentUserId(): String
+    }
+}
+
+package "Infrastructure" #FDECEF {
+    class NetworkFileManager #F8D8DE {
+        +loadFromFile(filePath: String): SocialNetwork
+        +saveToFile(network: SocialNetwork, filePath: String): void
+    }
+
+    class PasswordUtil <<utility>> #F8D8DE {
+        {static} +hashPassword(password: String): String
+        {static} +verifyPassword(password: String,\nstoredPasswordHash: String): boolean
+    }
+}
+
+' Application composition and navigation
+Main ..> SocialNetworkFxApp : launches
+SocialNetworkFxApp ..> SocialNetworkApp : creates
+SocialNetworkFxApp *-- AppContext : holds
+SocialNetworkApp ..> AppContext : creates
+
+' Controller contract and simplified UI dependencies
+LoginController ..|> AppController
+RegisterController ..|> AppController
+DashboardController ..|> AppController
+ProfileController ..|> AppController
+FriendsController ..|> AppController
+RecommendationsController ..|> AppController
+AppController ..> SocialNetworkFxApp : navigation
+AppController ..> AppContext : shared services
+
+' Shared application context
+AppContext o-- SocialNetwork
+AppContext o-- Session
+AppContext o-- AuthService
+AppContext o-- UserService
+AppContext o-- FriendService
+AppContext o-- RecommendationService
+AppContext o-- NetworkFileManager
+
+' Service dependencies
+AuthService --> SocialNetwork
+AuthService --> Session
+AuthService ..> User : creates
+AuthService ..> PasswordUtil : hash / verify
+UserService --> SocialNetwork
+UserService --> Session
+FriendService --> SocialNetwork
+FriendService --> Session
+RecommendationService --> SocialNetwork
+RecommendationService --> Session
+
+' Domain and persistence relationships
+Session -[hidden]right- SocialNetwork
+SocialNetwork "1" *-right- "0..*" User : owns vertices
+User "0..*" -- "0..*" User : undirected friendship\n(via friendIds)
+NetworkFileManager ..> SocialNetwork : loads / saves
+NetworkFileManager ..> User : serializes
+
+legend bottom
+  |= Colour |= Layer |
+  |<#D9E8FF>  | Application |
+  |<#FFE4C2>  | JavaFX UI |
+  |<#D9F1E0>  | Service |
+  |<#E4D9FF>  | Domain Model |
+  |<#F8D8DE>  | Infrastructure |
+
+  *-- Composition    o-- Aggregation
+  --> Association    ..> Dependency    ..|> Interface implementation
+endlegend
+
+@enduml

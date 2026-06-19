@@ -1,0 +1,7 @@
+app
+model
+persistence
+service
+ui.javafx
+ui.javafx.controller
+util

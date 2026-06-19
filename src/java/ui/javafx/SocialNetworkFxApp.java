@@ -45,7 +45,7 @@ public class SocialNetworkFxApp extends Application {
         alert.setTitle("Welcome");
         alert.setHeaderText("Welcome to Buongiorno Social Network!");
         alert.setContentText(
-                "Sample data is available in the doc folder for testing.\n"
+                "[2] sample test data files are available in the [/sample] folder for testing.\n"
                         + "The password for all users is: 123456");
         alert.showAndWait();
     }
