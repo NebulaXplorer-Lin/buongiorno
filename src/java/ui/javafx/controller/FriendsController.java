@@ -229,6 +229,10 @@ public class FriendsController implements AppController {
     }
 
     private void handleDetailsReset() {
+        if (selectedFriendForDetails == null) {
+            return;
+        }
+
         friendsTable.getSelectionModel().clearSelection();
         refreshFriends();
     }

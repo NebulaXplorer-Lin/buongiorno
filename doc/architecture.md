@@ -971,26 +971,24 @@ public class PasswordUtil
 
 ```java
 private static final int SALT_LENGTH = 16;
-private static final int ITERATIONS = 65536;
-private static final int KEY_LENGTH = 256;
+private static final int ITERATIONS = 600_000;
+private static final int KEY_LENGTH_BITS = 256;
 ```
 
 #### Field Explanation
 
 | Field | Type | Purpose |
 |---|---|---|
-| `SALT_LENGTH` | `int` | Length of the random salt |
+| `SALT_LENGTH` | `int` | Length of the random salt in bytes |
 | `ITERATIONS` | `int` | Number of PBKDF2 iterations |
-| `KEY_LENGTH` | `int` | Length of the generated hash key |
+| `KEY_LENGTH_BITS` | `int` | Length of the generated hash key in bits |
 
 #### Key Methods
 
 ```java
 public static String hashPassword(String password)
 public static boolean verifyPassword(String password, String storedPasswordHash)
-private static byte[] generateSalt()
-private static byte[] pbkdf2(String password, byte[] salt)
-private static boolean slowEquals(byte[] a, byte[] b)
+private static byte[] pbkdf2(String password, byte[] salt, int iterations)
 ```
 
 #### Password Hashing Flow
@@ -1004,7 +1002,8 @@ PasswordUtil applies PBKDF2WithHmacSHA256
  ↓
 Salt and hash are encoded as Base64
  ↓
-Stored value is saved as "salt:hash"
+Stored value is saved as
+"pbkdf2-sha256$600000$<Base64 salt>$<Base64 hash>"
 ```
 
 #### Password Verification Flow
@@ -1016,7 +1015,7 @@ Stored salt is extracted
  ↓
 Entered password is hashed with same salt
  ↓
-New hash is compared with stored hash
+New hash is compared with the stored hash using `MessageDigest.isEqual`
  ↓
 Login succeeds only if hashes match
 ```
@@ -1024,6 +1023,9 @@ Login succeeds only if hashes match
 #### Design Reason
 
 Storing plain-text passwords is poor practice. Even though this is a student project, using password hashing shows professional awareness of basic security design.
+
+Legacy values produced by `String.hashCode()` are intentionally rejected and
+must be replaced by registering the account again.
 
 ---
 
