@@ -1,5 +1,7 @@
 package ui.javafx.controller;
 
+import java.io.File;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -7,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
-import java.io.File;
 import model.SocialNetwork;
 import model.User;
 import ui.javafx.AppContext;
@@ -105,8 +106,10 @@ public class LoginController implements AppController {
             context.getSession().logout();
             updateUserLookupLabel();
             showInfo("Network data loaded. Please sign in.");
+        } catch (IllegalArgumentException exception) {
+            showError(exception.getMessage());
         } catch (Exception exception) {
-            showError("Could not load network data.");
+            showError("Network data loading error.");
         }
     }
 
