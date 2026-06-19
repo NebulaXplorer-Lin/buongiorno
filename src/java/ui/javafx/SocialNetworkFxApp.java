@@ -6,6 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import ui.javafx.controller.AppController;
 
@@ -44,9 +46,16 @@ public class SocialNetworkFxApp extends Application {
         alert.initOwner(primaryStage);
         alert.setTitle("Welcome");
         alert.setHeaderText("Welcome to Buongiorno Social Network!");
-        alert.setContentText(
-                "[2] sample test data files are available in the [/sample] folder for testing.\n"
+
+        Label content = new Label(
+                "Sample test data files are available in the /sample folder for testing.\n"
                         + "The password for all users is: 123456");
+        content.setWrapText(true);
+        content.setMinHeight(Region.USE_PREF_SIZE);
+        content.setPrefWidth(500);
+
+        alert.getDialogPane().setContent(content);
+        alert.setResizable(true);
         alert.showAndWait();
     }
 
